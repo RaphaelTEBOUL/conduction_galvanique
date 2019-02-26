@@ -3,13 +3,13 @@
 #include <WiFiUDP.h>
 // Variable
 bool test = true;    // switch
-long periode = 10; // periode
+long DeltaTime = 10; // periode
 long LastTime = 0;   // last Switch
 
 
 void setup() {
   // Init Serial
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // Init Pins and Time
   pinMode(16, OUTPUT);
@@ -19,24 +19,21 @@ void setup() {
 }
 
 void loop() {
+  // put your main code here, to run repeatedly:
   long TDelta = millis()-LastTime;
   
-  if (TDelta > periode)
+  if (TDelta > DeltaTime)
   {
     test = !test;
     LastTime = millis();
   }
-  
+
   if (test){
     digitalWrite(16, HIGH);
-    int Value = analogRead(39);
-    Serial.println(Value);
-    delay(500);
   }
   else{
     digitalWrite(16, LOW);
-    int Value = analogRead(39);
-    Serial.print(Value);
   } 
-  
+  int Value = analogRead(39); //39 = SVN Pin
+  Serial.println(Value);
 }
