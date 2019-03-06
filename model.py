@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 
 sequence_length = 100
 n_channels = 1
-n_classes = 3
+n_classes = 5
 batch_size = 16
 n_epochs = 20
-n_lstm_units = 32
+n_lstm_units = 64
 
 # A simple LSTM classifier
 
@@ -31,17 +31,33 @@ def build_model():
     return model
 
 def load_data(type = 'train'):
-    avide = pickle.load(open('data/avide/' + type + '.pkl', 'rb')) #shape (batch, time, features)
-    connecte = pickle.load(open('data/connecte/' + type + '.pkl', 'rb'))
-    touche = pickle.load(open('data/touche/' + type + '.pkl', 'rb'))
-    X = np.concatenate((avide, connecte, touche), axis = 0)
+    # avide = pickle.load(open('data/avide/' + type + '.pkl', 'rb')) #shape (batch, time, features)
+    # connecte = pickle.load(open('data/connecte/' + type + '.pkl', 'rb'))
+    # touche = pickle.load(open('data/touche/' + type + '.pkl', 'rb'))
+    # X = np.concatenate((avide, connecte, touche), axis = 0)
 
-    Y = np.zeros((len(avide) + len(connecte) + len(touche), n_classes))
-    Y[:len(avide)] = np.array([1,0,0])
-    Y[len(avide):len(avide) + len(connecte)] = np.array([0,1,0])
-    Y[len(avide) + len(touche):len(avide) + len(connecte) + len(touche)] = np.array([0,0,1])
+    # Y = np.zeros((len(avide) + len(connecte) + len(touche), n_classes))
+    # Y[:len(avide)] = np.array([1,0,0])
+    # Y[len(avide):len(avide) + len(connecte)] = np.array([0,1,0])
+    # Y[len(avide) + len(touche):len(avide) + len(connecte) + len(touche)] = np.array([0,0,1])
+
+    touche0 = pickle.load(open('data/touche0/' + type + '.pkl', 'rb')) #shape (batch, time, features)
+    touche1 = pickle.load(open('data/touche1/' + type + '.pkl', 'rb'))
+    touche2 = pickle.load(open('data/touche2/' + type + '.pkl', 'rb'))
+    touche3 = pickle.load(open('data/touche3/' + type + '.pkl', 'rb'))
+    pastouche = pickle.load(open('data/pastouche/' + type + '.pkl', 'rb'))
+    X = np.concatenate((touche0, touche1, touche2, touche3, pastouche), axis = 0)
+
+    Y = np.zeros((len(touche0) + len(touche1) + len(touche2) + len(touche3) + len(pastouche), n_classes))
+    Y[:len(touche0)] = np.array([1,0,0,0,0])
+    Y[len(touche0):len(touche0) + len(touche1)] = np.array([0,1,0,0,0])
+    Y[len(touche0) + len(touche1):len(touche0) + len(touche1) + len(touche2)] = np.array([0,0,1,0,0])
+    Y[len(touche0) + len(touche1) + len(touche2):len(touche0) + len(touche1) + len(touche2) + len(touche3)] = np.array([0,0,0,1,0])
+    Y[len(touche0) + len(touche1) + len(touche2) + len(touche3):len(touche0) + len(touche1) + len(touche2) + len(touche3) + len(pastouche)] = np.array([0,0,0,0,1])
 
     return X, Y
+
+
 
 # Training
 
@@ -49,9 +65,9 @@ X_train, Y_train =  load_data(type = 'train')
 model = build_model()
 model.summary()
 
-checkpoint = ModelCheckpoint('best_model.h5', monitor='val_acc', verbose=0, save_best_only=True, mode='max')
+checkpoint = ModelCheckpoint('best_model_2.h5', monitor='val_acc', verbose=0, save_best_only=True, mode='max')
 model.fit(X_train, Y_train, batch_size= batch_size, epochs=n_epochs, verbose=1, callbacks=[checkpoint], validation_split=0.05)
-model = load_model('best_model.h5')
+model = load_model('best_model_2.h5')
 
 # Test and confusion matrix
 
@@ -109,7 +125,7 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     fig.tight_layout()
     return ax
 
-
-plot_confusion_matrix(Y_test.argmax(axis=1), Y_pred.argmax(axis=1), ['avide', 'connecte', 'touche'],normalize=True, title=None,cmap=plt.cm.Blues)
-plt.savefig('confusion_matrix.png', bbox_inches='tight')
+#['avide', 'connecte', 'touche'] (labels)
+plot_confusion_matrix(Y_test.argmax(axis=1), Y_pred.argmax(axis=1), ['touche0', 'touche1', 'touche2', 'touche3', 'pastouche'],normalize=True, title=None,cmap=plt.cm.Blues)
+plt.savefig('confusion_matrix_2.png', bbox_inches='tight')
 plt.show()
