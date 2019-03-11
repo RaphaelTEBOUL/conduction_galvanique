@@ -35,7 +35,7 @@ rawdata = [int(i) for i in rawdata[:]]
 plt.plot(range(len(rawdata)),rawdata)
 plt.show()
 
-with open('roro3.txt','w') as f:
+with open('4/m5.txt','w') as f:
     for i in rawdata:
         f.write("%d\n" % i)
         

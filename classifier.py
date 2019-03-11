@@ -25,22 +25,24 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 import pickle
 import numpy as np
 from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+
 
 def load_data():
     
 
-    input1 = pickle.load(open('data/droite/input.pkl', 'rb'))
-   
-    input2 = pickle.load(open('data/gauche/input.pkl', 'rb'))
+    input1 = pickle.load(open('data/1/input.pkl', 'rb'))
+    input2 = pickle.load(open('data/2/input.pkl', 'rb'))
+    input3 = pickle.load(open('data/3/input.pkl', 'rb'))
+    input4 = pickle.load(open('data/4/input.pkl', 'rb'))
     
-    inputs=np.concatenate((input1,input2) ,axis=0)
+    inputs=np.concatenate((input1,input2,input3,input4) ,axis=0)
     
-    target1 = pickle.load(open('data/droite/targets.pkl', 'rb'))
-    target2 = pickle.load(open('data/gauche/targets.pkl', 'rb'))
+    target1 = pickle.load(open('data/1/targets.pkl', 'rb'))
+    target2 = pickle.load(open('data/2/targets.pkl', 'rb'))
+    target3 = pickle.load(open('data/3/targets.pkl', 'rb'))
+    target4 = pickle.load(open('data/4/targets.pkl', 'rb'))
     
-    targets=np.concatenate((target1, target2),axis = 0)
+    targets=np.concatenate((target1, target2,target3,target4),axis = 0)
     
     return inputs, targets
 
