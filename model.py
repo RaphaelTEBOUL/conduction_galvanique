@@ -4,13 +4,14 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 import pickle
 import numpy as np
 from sklearn.metrics import confusion_matrix
+
 import matplotlib.pyplot as plt
 
 # Hyperparameters
 
 sequence_length = 100
 n_channels = 1
-n_classes = 4
+n_classes = 2
 batch_size = 16
 n_epochs = 30
 n_lstm_units = 64
@@ -31,27 +32,20 @@ def build_model():
     return model
 
 def load_data(type = 'train'):
-    # avide = pickle.load(open('data/avide/' + type + '.pkl', 'rb')) #shape (batch, time, features)
-    # connecte = pickle.load(open('data/connecte/' + type + '.pkl', 'rb'))
-    # touche = pickle.load(open('data/touche/' + type + '.pkl', 'rb'))
-    # X = np.concatenate((avide, connecte, touche), axis = 0)
+    
 
-    # Y = np.zeros((len(avide) + len(connecte) + len(touche), n_classes))
-    # Y[:len(avide)] = np.array([1,0,0])
-    # Y[len(avide):len(avide) + len(connecte)] = np.array([0,1,0])
-    # Y[len(avide) + len(touche):len(avide) + len(connecte) + len(touche)] = np.array([0,0,1])
+    bras1 = pickle.load(open('data/droite/' + type + '.pkl', 'rb')) #shape (batch, time, features)
+    bras2 = pickle.load(open('data/gauche/' + type + '.pkl', 'rb'))
+   # bras3 = pickle.load(open('data/bras3/' + type + '.pkl', 'rb'))
+   # bras4 = pickle.load(open('data/bras4/' + type + '.pkl', 'rb'))
+    X = np.concatenate((bras1, bras2,), axis = 0)
 
-    bras1 = pickle.load(open('data/bras1/' + type + '.pkl', 'rb')) #shape (batch, time, features)
-    bras2 = pickle.load(open('data/bras2/' + type + '.pkl', 'rb'))
-    bras3 = pickle.load(open('data/bras3/' + type + '.pkl', 'rb'))
-    bras4 = pickle.load(open('data/bras4/' + type + '.pkl', 'rb'))
-    X = np.concatenate((bras1, bras2, bras3, bras4), axis = 0)
-
-    Y = np.zeros((len(bras1) + len(bras2) + len(bras3) + len(bras4), n_classes))
-    Y[:len(bras1)] = np.array([1,0,0,0])
-    Y[len(bras1):len(bras1) + len(bras2)] = np.array([0,1,0,0])
-    Y[len(bras1) + len(bras2):len(bras1) + len(bras2) + len(bras3)] = np.array([0,0,1,0])
-    Y[len(bras1) + len(bras2) + len(bras3):len(bras1) + len(bras2) + len(bras3) + len(bras4)] = np.array([0,0,0,1])
+    Y = np.zeros((len(bras1) + len(bras2), n_classes))
+    Y[:len(bras1)] = 1
+    Y[len(bras1):len(bras1) + len(bras2)] = 2
+    
+    #Y[len(bras1) + len(bras2):len(bras1) + len(bras2) + len(bras3)] = np.array([0,0,1,0])
+    #Y[len(bras1) + len(bras2) + len(bras3):len(bras1) + len(bras2) + len(bras3) + len(bras4)] = np.array([0,0,0,1])
 
     return X, Y
 
@@ -71,6 +65,9 @@ model = load_model('best_model_3.h5')
 
 X_test, Y_test = load_data(type = 'test')
 Y_pred = model.predict(X_test)
+
+cm = confusion_matrix(Y_test, Y_pred)
+print(cm)
 
 def plot_confusion_matrix(y_true, y_pred, classes,
                           normalize=False,
@@ -124,6 +121,6 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     return ax
 
 #['avide', 'connecte', 'touche'] (labels)
-plot_confusion_matrix(Y_test.argmax(axis=1), Y_pred.argmax(axis=1), ['bras1', 'bras2', 'bras3', 'bras4'],normalize=True, title=None,cmap=plt.cm.Blues)
+plot_confusion_matrix(Y_test.argmax(axis=1), Y_pred.argmax(axis=1), ['bras1', 'bras2'],normalize=True, title=None,cmap=plt.cm.Blues)
 plt.savefig('confusion_matrix_3.png', bbox_inches='tight')
 plt.show()
