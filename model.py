@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 sequence_length = 100
 n_channels = 1
 n_classes = 2
-batch_size = 16
+batch_size = 15
 n_epochs = 30
 n_lstm_units = 64
 
@@ -38,11 +38,11 @@ def load_data(type = 'train'):
     bras2 = pickle.load(open('data/gauche/' + type + '.pkl', 'rb'))
    # bras3 = pickle.load(open('data/bras3/' + type + '.pkl', 'rb'))
    # bras4 = pickle.load(open('data/bras4/' + type + '.pkl', 'rb'))
-    X = np.concatenate((bras1, bras2,), axis = 0)
+    X = np.concatenate((bras1, bras2), axis = 0)
 
     Y = np.zeros((len(bras1) + len(bras2), n_classes))
-    Y[:len(bras1)] = 1
-    Y[len(bras1):len(bras1) + len(bras2)] = 2
+    Y[:len(bras1)] = np.array([1,0])
+    Y[len(bras1):len(bras1) + len(bras2)] = np.array([0,1])
     
     #Y[len(bras1) + len(bras2):len(bras1) + len(bras2) + len(bras3)] = np.array([0,0,1,0])
     #Y[len(bras1) + len(bras2) + len(bras3):len(bras1) + len(bras2) + len(bras3) + len(bras4)] = np.array([0,0,0,1])
